@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-import requests, random
+import requests, random, os
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import atexit
@@ -8,9 +8,8 @@ import telepot
 app = Flask(__name__)
 
 word_list = [(160, 'AAPL', 162, None, False, False), (104, 'AMZN', 105, None, False, False)]
-# apikeys_list = ['0c471a777f91b810299e5e3981522450','c487c7f54a0fdefa58f92596372acaf7']
-apikeys_list = ['c487c7f54a0fdefa58f92596372acaf7']
-telegram_token  = "1254245791:AAHkSETu7ISwvVk5ggQ0tMEiEGJD-ExycyI"
+apikeys_list = ['0c471a777f91b810299e5e3981522450','c487c7f54a0fdefa58f92596372acaf7', 'ba46d09d77ac077b7bcbeab874df2ab5']
+telegram_token  = os.getenv('TELEG_TOCKEN')
 receiver_id = 729835175
 
 def sendMessage(text):
@@ -43,7 +42,7 @@ def update_ticker_prices():
                 word_list[i] = (low, word, high, new_price, alertLow, alertHigh)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=update_ticker_prices, trigger="interval", seconds=10)
+scheduler.add_job(func=update_ticker_prices, trigger="interval", seconds=60)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
