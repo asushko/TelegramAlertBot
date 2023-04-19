@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Word List</title>
+  <title>Alerts List</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h1>Word List</h1>
+<h1>Tickers List</h1>
 
 <form action="/add_word" method="POST">
-  <label for="word">Word:</label>
+  <label for="word">Ticker:</label>
   <input type="text" id="word" name="word" required>
   <label for="low">Low:</label>
   <input type="number" id="low" name="low" min="0" max="10000" required>
