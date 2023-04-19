@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-import requests, random, os
+import requests, random, os, time
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import atexit
@@ -8,7 +8,8 @@ import telepot
 app = Flask(__name__)
 
 word_list = [(160, 'AAPL', 162, None, False, False), (104, 'AMZN', 105, None, False, False)]
-apikeys_list = ['0c471a777f91b810299e5e3981522450','c487c7f54a0fdefa58f92596372acaf7', 'ba46d09d77ac077b7bcbeab874df2ab5']
+apikeys_list = ['0c471a777f91b810299e5e3981522450','c487c7f54a0fdefa58f92596372acaf7',
+                'ba46d09d77ac077b7bcbeab874df2ab5', '313e40cba8245e1accc76a64d3c241ac']
 telegram_token  = os.getenv('TELEG_TOCKEN')
 receiver_id = 729835175
 
@@ -22,10 +23,12 @@ def get_ticker_data(word):
     print("Getting ticker data from URL:", url)
     response = requests.get(url)
     data = response.json()
-    if len(data) > 0:
+    if data and isinstance(data, list) and len(data) > 0 and 'price' in data[0]:
         return data[0]['price']
     else:
-        return None
+        print("API key is over:", api_key)
+        time.sleep(2)
+        return get_ticker_data(word)
 
 def update_ticker_prices():
     print(word_list)
@@ -42,7 +45,7 @@ def update_ticker_prices():
                 word_list[i] = (low, word, high, new_price, alertLow, alertHigh)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=update_ticker_prices, trigger="interval", seconds=60)
+scheduler.add_job(func=update_ticker_prices, trigger="interval", seconds=10)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
