@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word List</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1>Word List</h1>
+
+<form action="/add_word" method="POST">
+  <label for="word">Word:</label>
+  <input type="text" id="word" name="word" required>
+  <label for="low">Low:</label>
+  <input type="number" id="low" name="low" min="0" max="10000" required>
+  <label for="high">High:</label>
+  <input type="number" id="high" name="high" min="0" max="10000" required>
+  <button type="submit">Add Word</button>
+</form>
+
+<table>
+  <tr>
+    <th>Low</th>
+    <th>Ticker</th>
+    <th>High</th>
+    <th>Price</th>
+    <th>Action</th>
+  </tr>
+  {% for low, word, high, price, lowAlert, highAlert in word_list %}
+  <tr {% if price is not none %}
+      {% if price < low %}
+  class="low"
+  {% elif price > high %}
+  class="high"
+  {% endif %}
+  {% endif %}>
+  <td>{{ low }}</td>
+  <td>{{ word }}</td>
+  <td>{{ high }}</td>
+  <td>{{ price }}</td>
+  <td>
+    <form action="/remove_word" method="POST">
+      <input type="hidden" name="word" value="{{ word }}">
+      <button type="submit">Remove</button>
+    </form>
+  </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
